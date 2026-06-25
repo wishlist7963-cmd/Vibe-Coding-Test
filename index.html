@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniGo - 통합 모빌리티 라이프 플랫폼</title>
+  <meta name="description" content="카셰어링, 택시 호출, 따릉이, 킥보드, 대중교통까지. OmniGo 하나로 일상의 모든 이동을 예약하고 결제하세요. 가장 스마트한 친환경 이동 추천 서비스를 만나보세요.">
+  
+  <!-- Premium Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Clean Reset & CSS Variables */
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #0f172a;
+      --accent-indigo: #6366f1;
+      --accent-indigo-hover: #4f46e5;
+      --accent-emerald: #10b981;
+      --accent-emerald-hover: #059669;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Accessibility / Focus States */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent-indigo);
+      outline-offset: 4px;
+    }
+
+    /* Grid Layout Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Common Typography & Styles */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .section-title-wrap {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent-indigo);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text-primary) 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section-subtitle {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    /* Button System */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-indigo);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-indigo-hover);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-secondary);
+      transform: translateY(-2px);
+    }
+
+    .btn-emerald {
+      background-color: var(--accent-emerald);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-emerald:hover {
+      background-color: var(--accent-emerald-hover);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* 1. HEADER & NAVIGATION */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: var(--transition-smooth);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-emerald) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow-indigo);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .logo-dot {
+      color: var(--accent-emerald);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 32px;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .header-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-sm {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+    }
+
+    /* Mobile Nav Toggle (CSS Only) */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 24px;
+      height: 18px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background-color: var(--text-primary);
+      border-radius: 2px;
+      transition: var(--transition-smooth);
+    }
+
+    #mobile-menu-checkbox {
+      display: none;
+    }
+
+    /* 2. HERO SECTION */
+    .hero {
+      position: relative;
+      padding: 180px 0 100px;
+      background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 10% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-content {
+      max-width: 620px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-badge-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: var(--accent-indigo);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+
+    .hero-badge-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-emerald) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: var(--text-secondary);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 32px;
+    }
+
+    .stat-item h3 {
+      font-size: 1.8rem;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Hero Mockup Cards UI */
+    .hero-mockup {
+      position: relative;
+    }
+
+    .mockup-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Embedded Mini-Map UI */
+    .mockup-map {
+      flex-grow: 1;
+      border-radius: 16px;
+      background: #111827;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 16px;
+    }
+
+    .map-grid-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background-image: 
+        radial-gradient(var(--text-muted) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .map-route {
+      position: absolute;
+      width: 180px;
+      height: 120px;
+      border: 3px dashed var(--accent-indigo);
+      border-radius: 50%;
+      top: 30%;
+      left: 20%;
+      transform: rotate(-15deg);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+    }
+
+    .map-pin {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: var(--bg-primary);
+      border: 3px solid var(--accent-emerald);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    .map-pin::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+    }
+
+    .pin-start {
+      top: 55%;
+      left: 22%;
+    }
+
+    .pin-end {
+      top: 25%;
+      left: 65%;
+      border-color: var(--accent-indigo);
+    }
+    .pin-end::after {
+      background: var(--accent-indigo);
+    }
+
+    .map-vehicle {
+      position: absolute;
+      top: 40%;
+      left: 45%;
+      background: var(--accent-indigo);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Card Overlay inside mockup */
+    .mockup-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mockup-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mockup-icon-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-indigo);
+    }
+
+    .mockup-detail h4 {
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+    .mockup-detail p {
+      font-size: 0.8rem;
+    }
+
+    /* 3. SERVICE OVERVIEW */
+    .overview {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .overview-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px 32px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .overview-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent-indigo);
+      box-shadow: var(--glow-indigo);
+    }
+
+    .overview-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-emerald));
+      opacity: 0;
+      transition: var(--transition-smooth);
+    }
+
+    .overview-card:hover::before {
+      opacity: 1;
+    }
+
+    .overview-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-indigo);
+      margin-bottom: 24px;
+      transition: var(--transition-smooth);
+    }
+
+    .overview-card:hover .overview-icon {
+      background: var(--accent-indigo);
+      color: #ffffff;
+      border-color: var(--accent-indigo);
+    }
+
+    .overview-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    /* 4. MOBILITY OPTIONS */
+    .options {
+      padding: 100px 0;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 24px;
+    }
+
+    /* Card spans */
+    .option-card {
+      grid-column: span 2;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 32px;
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 380px;
+    }
+
+    /* Make 카셰어링 & 택시 larger (span 3) for dynamic visual weight */
+    .option-card.large {
+      grid-column: span 3;
+    }
+
+    .option-card:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .option-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .option-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-icon.car { background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); }
+    .option-icon.taxi { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .option-icon.bike { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .option-icon.kick { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+    .option-icon.transit { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
+
+    .option-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .option-body {
+      margin-top: auto;
+    }
+
+    .option-title {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+
+    .option-desc {
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    .option-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .option-pricing {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .option-pricing span {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .option-arrow {
+      color: var(--text-secondary);
+      transition: var(--transition-smooth);
+    }
+
+    .option-card:hover .option-arrow {
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    /* 5. HOW IT WORKS */
+    .how-it-works {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      position: relative;
+    }
+
+    .step-card {
+      position: relative;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    /* Connecting Line between steps */
+    .steps-grid::after {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-indigo) 0%, var(--accent-emerald) 100%);
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-emerald) 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+    }
+
+    .step-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .step-card p {
+      font-size: 0.9rem;
+    }
+
+    /* 6. PRICING SECTION */
+    .pricing {
+      padding: 100px 0;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .pricing-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-6px);
+    }
+
+    .pricing-card.featured {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, rgba(30, 41, 59, 0.8) 100%);
+      border: 2px solid var(--accent-indigo);
+      box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-indigo);
+      color: #ffffff;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .pricing-header h3 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .pricing-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .price {
+      font-size: 2.2rem;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .price span {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 24px;
+    }
+
+    .pricing-features li {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-features svg {
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+
+    .pricing-card .btn {
+      width: 100%;
+    }
+
+    /* 7. BENEFITS SECTION */
+    .benefits {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .benefit-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .benefit-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .benefit-info h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .benefit-info p {
+      font-size: 0.9rem;
+    }
+
+    /* 8. ASIDE (PROMOTION / APP BANNER) */
+    .app-aside {
+      padding: 80px 0;
+      background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 60%);
+    }
+
+    .aside-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 32px;
+      padding: 60px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aside-banner::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: var(--accent-indigo);
+      filter: blur(120px);
+      opacity: 0.25;
+      bottom: -150px;
+      right: -100px;
+      z-index: 0;
+    }
+
+    .aside-content {
+      z-index: 1;
+    }
+
+    .aside-title {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 60%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .aside-desc {
+      margin-bottom: 32px;
+      font-size: 1.1rem;
+    }
+
+    .aside-action {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .store-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      transition: var(--transition-smooth);
+      width: 170px;
+    }
+
+    .store-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--text-secondary);
+      transform: translateY(-2px);
+    }
+
+    .store-btn-text span {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    /* QR Code Placeholder */
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .qr-box {
+      width: 160px;
+      height: 160px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .qr-placeholder-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .qr-caption {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* 9. FOOTER */
+    footer {
+      background: #090d16;
+      border-top: 1px solid var(--border-color);
+      padding: 80px 0 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand p {
+      font-size: 0.95rem;
+      margin-top: 16px;
+      margin-bottom: 24px;
+      max-width: 280px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .social-icon:hover {
+      background: var(--accent-indigo);
+      color: #ffffff;
+      border-color: var(--accent-indigo);
+      transform: translateY(-3px);
+    }
+
+    .footer-links-title {
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .footer-links-list {
+      list-style: none;
+    }
+
+    .footer-links-list li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links-list a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      transition: var(--transition-smooth);
+    }
+
+    .footer-links-list a:hover {
+      color: var(--text-primary);
+      padding-left: 4px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .copyright {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-legal-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      transition: var(--transition-smooth);
+    }
+
+    .footer-legal-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* RESPONSIVE LAYOUTS */
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+      .hero-content {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+      .hero-stats {
+        justify-content: center;
+      }
+      .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .options-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .option-card.large, .option-card {
+        grid-column: span 2;
+      }
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .steps-grid::after {
+        display: none;
+      }
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .aside-banner {
+        grid-template-columns: 1fr;
+        padding: 40px;
+        text-align: center;
+      }
+      .aside-action {
+        flex-direction: column;
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+        z-index: 110;
+      }
+      
+      nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--bg-secondary);
+        border-left: 1px solid var(--border-color);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 100px 40px;
+        transition: var(--transition-smooth);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .nav-list {
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+      }
+
+      .header-cta {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 32px;
+      }
+
+      .header-cta .btn {
+        width: 100%;
+      }
+
+      /* Mobile Navigation Open State Trigger via CSS-only checkbox */
+      #mobile-menu-checkbox:checked ~ nav {
+        right: 0;
+      }
+
+      #mobile-menu-checkbox:checked ~ .menu-toggle span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      #mobile-menu-checkbox:checked ~ .menu-toggle span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      #mobile-menu-checkbox:checked ~ .menu-toggle span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .overview-grid, .options-grid, .steps-grid, .pricing-grid, .benefits-grid, .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .option-card.large, .option-card {
+        grid-column: span 1;
+        height: auto;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HEADER & NAVIGATION -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo-link">
+        <div class="logo-icon">
+          <!-- Logo SVG Icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <span class="logo-text">OmniGo<span class="logo-dot">.</span></span>
+      </a>
+
+      <!-- CSS Checkbox for Burger Menu Toggle -->
+      <input type="checkbox" id="mobile-menu-checkbox">
+      <label for="mobile-menu-checkbox" class="menu-toggle" aria-label="메뉴 열기">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#overview" class="nav-link">서비스 소개</a></li>
+          <li><a href="#how-it-works" class="nav-link">이용 방법</a></li>
+          <li><a href="#options" class="nav-link">이동 수단</a></li>
+          <li><a href="#pricing" class="nav-link">요금제</a></li>
+        </ul>
+        <div class="header-cta">
+          <a href="#aside" class="btn btn-secondary btn-sm">앱 다운로드</a>
+          <a href="#options" class="btn btn-primary btn-sm">지금 시작하기</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- 2. HERO SECTION -->
+    <section class="hero" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="hero-badge-tag">NEW</span>
+            <span class="hero-badge-text">친환경 스마트 이동 경로 매칭 오픈</span>
+          </div>
+          <h1 class="hero-title">
+            당신의 모든 이동을<br>
+            하나의 앱으로, <span>OmniGo</span>
+          </h1>
+          <p class="hero-description">
+            차량 공유, 택시 호출, 따릉이, 전동 킥보드부터 대중교통 환승까지. OmniGo와 함께 복잡한 환승 없이 최적의 경로로 똑똑하게 이동해 보세요.
+          </p>
+          <div class="hero-buttons">
+            <a href="#options" class="btn btn-primary">이동 수단 선택하기</a>
+            <a href="#overview" class="btn btn-secondary">서비스 알아보기</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <h3>2.5M+</h3>
+              <p>누적 이용자 수</p>
+            </div>
+            <div class="stat-item">
+              <h3>15,000+</h3>
+              <p>등록 차량 및 기기</p>
+            </div>
+            <div class="stat-item">
+              <h3>98.5%</h3>
+              <p>서비스 만족도</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-mockup">
+          <div class="mockup-container">
+            <div class="mockup-map">
+              <div class="map-grid-bg"></div>
+              <!-- Route & pins mock visual -->
+              <div class="map-route"></div>
+              <div class="map-pin pin-start"></div>
+              <div class="map-pin pin-end"></div>
+              <div class="map-vehicle">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12" y2="18"></line>
+                </svg>
+                카셰어링 이동 중
+              </div>
+            </div>
+            <div class="mockup-card">
+              <div class="mockup-info">
+                <div class="mockup-icon-container">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </div>
+                <div class="mockup-detail">
+                  <h4>최적 경로 탐색 완료</h4>
+                  <p>안심 보장 안심 보험 가입 완료</p>
+                </div>
+              </div>
+              <span class="btn btn-emerald btn-sm">이용 중</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SERVICE OVERVIEW -->
+    <section class="overview" id="overview">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-badge">Service Overview</span>
+          <h2 class="section-title">연결할수록 빨라지는 일상</h2>
+          <p class="section-subtitle">
+            OmniGo는 파편화된 모빌리티 서비스를 하나로 모아 결제, 예약, 경로 찾기의 모든 번거로움을 완전히 해결합니다.
+          </p>
+        </div>
+
+        <div class="overview-grid">
+          <article class="overview-card">
+            <div class="overview-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="22" y1="12" x2="18" y2="12"></line>
+                <line x1="6" y1="12" x2="2" y2="12"></line>
+                <line x1="12" y1="6" x2="12" y2="2"></line>
+                <line x1="12" y1="22" x2="12" y2="18"></line>
+              </svg>
+            </div>
+            <h3>실시간 최적 경로 추천</h3>
+            <p>현재 위치를 기반으로 목적지까지 차량, 자전거, 대중교통 등 최적의 결합 경로를 계산하여 가장 빠른 길을 제안합니다.</p>
+          </article>
+
+          <article class="overview-card">
+            <div class="overview-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+            </div>
+            <h3>통합 원클릭 결제</h3>
+            <p>다양한 회사의 이동 수단 마다 회원가입하고 결제수단을 등록할 필요가 없습니다. OmniGo 단 하나의 계정으로 모두 해결합니다.</p>
+          </article>
+
+          <article class="overview-card">
+            <div class="overview-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <h3>친환경 리워드 혜택</h3>
+            <p>자전거, 도보, 전동 킥보드 등 탄소 배출을 줄이는 친환경 이동 수단을 선택할 때마다 다음 결제 시 즉시 사용 가능한 마일리지를 드립니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MOBILITY OPTIONS -->
+    <section class="options" id="options">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-badge">Mobility Options</span>
+          <h2 class="section-title">가장 유연한 이동 선택지</h2>
+          <p class="section-subtitle">오늘의 기분, 날씨, 상황에 맞는 가장 알맞은 이동 방식을 자유롭게 선택하세요.</p>
+        </div>
+
+        <div class="options-grid">
+          <!-- Car sharing -->
+          <article class="option-card large">
+            <div class="option-header">
+              <div class="option-icon car">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="22" height="13" rx="2" ry="2"></rect>
+                  <path d="M7 16h10M5 21v-5M19 21v-5"></path>
+                </svg>
+              </div>
+              <span class="option-badge">추천</span>
+            </div>
+            <div class="option-body">
+              <h3 class="option-title">카셰어링</h3>
+              <p class="option-desc">가까운 거리에 있는 대여 스폿에서 즉시 차량을 비대면으로 대여하고 반납하세요. 필요할 때 10분 단위로 스마트하게.</p>
+            </div>
+            <div class="option-footer">
+              <div class="option-pricing">
+                기본 요금
+                <span>10분당 800원~</span>
+              </div>
+              <a href="#aside" class="option-arrow" aria-label="카셰어링 예약하기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Taxi -->
+          <article class="option-card large">
+            <div class="option-header">
+              <div class="option-icon taxi">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 1 12v4c0 .6.4 1 1 1h2"></path>
+                  <circle cx="7" cy="17" r="2"></circle>
+                  <circle cx="17" cy="17" r="2"></circle>
+                </svg>
+              </div>
+              <span class="option-badge">24시간 서비스</span>
+            </div>
+            <div class="option-body">
+              <h3 class="option-title">택시 호출</h3>
+              <p class="option-desc">터치 한 번으로 가장 가까운 택시를 부르고 경로 안내부터 결제까지 자동 완료. 일반 호출부터 고급 블랙, 대형 세단까지.</p>
+            </div>
+            <div class="option-footer">
+              <div class="option-pricing">
+                기본 요금
+                <span>4,800원~</span>
+              </div>
+              <a href="#aside" class="option-arrow" aria-label="택시 호출하기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Bike -->
+          <article class="option-card">
+            <div class="option-header">
+              <div class="option-icon bike">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="5.5" cy="17.5" r="3.5"></circle>
+                  <circle cx="18.5" cy="17.5" r="3.5"></circle>
+                  <path d="M15 17.5L14.5 12h-4.2l-2 5.5"></path>
+                  <path d="M8.5 12l2.5-6h4.5l-1.5 5.5"></path>
+                  <path d="M17 6h-2.5"></path>
+                </svg>
+              </div>
+              <span class="option-badge">친환경</span>
+            </div>
+            <div class="option-body">
+              <h3 class="option-title">공공자전거</h3>
+              <p class="option-desc">도심 곳곳의 정류장에서 즉시 잠금을 해제하고 골목 구석구석을 상쾌하게 이동할 수 있는 자전거 대여 서비스.</p>
+            </div>
+            <div class="option-footer">
+              <div class="option-pricing">
+                기본 요금
+                <span>1시간 1,000원</span>
+              </div>
+              <a href="#aside" class="option-arrow" aria-label="자전거 확인하기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Scooter -->
+          <article class="option-card">
+            <div class="option-header">
+              <div class="option-icon kick">
+                <!-- E-Scooter SVG Icon -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="5" cy="19" r="2"></circle>
+                  <circle cx="19" cy="19" r="2"></circle>
+                  <path d="M5 17h14M16 19v-9H8"></path>
+                  <line x1="16" y1="10" x2="16" y2="4"></line>
+                  <line x1="14" y1="4" x2="18" y2="4"></line>
+                </svg>
+              </div>
+              <span class="option-badge">스마트</span>
+            </div>
+            <div class="option-body">
+              <h3 class="option-title">전동 킥보드</h3>
+              <p class="option-desc">도보로 걷기는 멀고 차 타기는 아까운 1km 미만의 라스트 마일 이동을 빠르게 해결해 주는 친근한 E-킥보드.</p>
+            </div>
+            <div class="option-footer">
+              <div class="option-pricing">
+                기본 요금
+                <span>잠금해제 600원~</span>
+              </div>
+              <a href="#aside" class="option-arrow" aria-label="킥보드 탐색하기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Transit Link -->
+          <article class="option-card">
+            <div class="option-header">
+              <div class="option-icon transit">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="2" width="16" height="20" rx="4"></rect>
+                  <line x1="12" y1="18" x2="12" y2="18"></line>
+                  <path d="M8 6h8M6 10h12M9 22l-1 2M15 22l1 2"></path>
+                </svg>
+              </div>
+              <span class="option-badge">환승 할인</span>
+            </div>
+            <div class="option-body">
+              <h3 class="option-title">대중교통 연계</h3>
+              <p class="option-desc">지하철, 버스와 개인형 이동 수단을 하나의 흐름으로 묶어 환승 할인 혜택과 가장 자연스러운 연계 경로를 제공합니다.</p>
+            </div>
+            <div class="option-footer">
+              <div class="option-pricing">
+                할인 혜택
+                <span>최대 30% 환승할인</span>
+              </div>
+              <a href="#aside" class="option-arrow" aria-label="대중교통 정보보기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HOW IT WORKS -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-badge">How It Works</span>
+          <h2 class="section-title">이렇게나 간편합니다</h2>
+          <p class="section-subtitle">복잡한 준비 없이 스마트폰 하나로 시작하는 여정, 단 4단계면 충분합니다.</p>
+        </div>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <div class="step-num">1</div>
+            <h3>위치 확인</h3>
+            <p>앱을 열고 지도에서 주변에 대기 중인 모든 이동 수단의 실시간 상태와 배터리 잔량을 바로 확인해 보세요.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-num">2</div>
+            <h3>이동 수단 선택</h3>
+            <p>목적지를 입력하면 표시되는 여러 최적 경로 옵션 중 나에게 가장 딱 맞는 합리적 수단을 터치합니다.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-num">3</div>
+            <h3>예약 또는 호출</h3>
+            <p>지정된 이동 수단을 터치하여 즉시 간편하게 사전 예약하거나 나를 데리러 올 차량을 안전하게 호출합니다.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-num">4</div>
+            <h3>이동 및 자동 결제</h3>
+            <p>목적지에 기분 좋게 도착한 뒤 앱에서 반납 완료하면 등록해 둔 결제 수단으로 요금이 자동 정산됩니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. PRICING SECTION -->
+    <section class="pricing" id="pricing">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-badge">Pricing Plans</span>
+          <h2 class="section-title">합리적이고 유연한 요금</h2>
+          <p class="section-subtitle">사용 패턴에 맞춰 가장 알맞은 결제 계획을 설계하세요.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Plan 1 -->
+          <article class="pricing-card">
+            <div class="pricing-header">
+              <h3>기본 요금제</h3>
+              <p>필요할 때 가끔 타시는 분들을 위한 일반 플랜</p>
+            </div>
+            <div class="price">0원<span>/월</span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                탑승한 시간만큼만 후불 결제
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                전 차량 표준 보험 적용
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                24시간 고객 케어 서비스 제공
+              </li>
+            </ul>
+            <a href="#aside" class="btn btn-secondary">가입하기</a>
+          </article>
+
+          <!-- Plan 2 -->
+          <article class="pricing-card">
+            <div class="pricing-header">
+              <h3>거리형 요금제</h3>
+              <p>일정 거리를 자주 이동하는 직장인을 위한 플랜</p>
+            </div>
+            <div class="price">4,900원<span>/월</span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                주행 거리 당 20% 마일리지 적립
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                출퇴근 피크 타임 예약 수수료 면제
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                자전거 기본 30분 매일 무료
+              </li>
+            </ul>
+            <a href="#aside" class="btn btn-secondary">가입하기</a>
+          </article>
+
+          <!-- Plan 3 (Featured) -->
+          <article class="pricing-card featured">
+            <span class="pricing-badge">BEST VALUE</span>
+            <div class="pricing-header">
+              <h3>구독 멤버십 (PASS)</h3>
+              <p>매일 이동 수단을 똑똑하게 활용하는 데일리 크루</p>
+            </div>
+            <div class="price">9,900원<span>/월</span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                카셰어링 대여 요금 무제한 50% 할인
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                자전거 & 킥보드 잠금해제 전면 무료
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                택시 호출 우선 배차 혜택 제공
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                동승자 1인 무료 보험 보장 적용
+              </li>
+            </ul>
+            <a href="#aside" class="btn btn-primary">구독 시작하기</a>
+          </article>
+
+          <!-- Plan 4 -->
+          <article class="pricing-card">
+            <div class="pricing-header">
+              <h3>기업용 플랜</h3>
+              <p>임직원의 업무용 이동 관리를 혁신하는 기업 패키지</p>
+            </div>
+            <div class="price">별도 문의<span></span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                임직원 이용 내역 통합 정산 및 대시보드
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                업무용 비즈니스 요금 할인 최대 25%
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                업무 목적 외 탑승 제한 정책 설정 가능
+              </li>
+            </ul>
+            <a href="mailto:biz@omnigo.com" class="btn btn-secondary">도입 문의</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. BENEFITS SECTION -->
+    <section class="benefits" id="benefits">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-badge">Why OmniGo</span>
+          <h2 class="section-title">OmniGo와 함께하는 특별함</h2>
+          <p class="section-subtitle">더 똑똑하고 쾌적하게 연결되는 모빌리티 서비스만의 압도적 장점입니다.</p>
+        </div>
+
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>가장 빠른 이동 경로</h3>
+              <p>실시간 교통 정보와 환승 최적화 알고리즘으로 이동 대기 시간을 평균 24% 줄여드립니다.</p>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+                <line x1="15" y1="3" x2="15" y2="21"></line>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>폭넓은 이동 수단</h3>
+              <p>대형 SUV부터 작은 전동 킥보드까지, 도심 속 필요한 모든 모빌리티 라인업을 제공합니다.</p>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>가장 쉬운 카드 자동결제</h3>
+              <p>복잡하게 카드를 꺼낼 필요 없이, 등록해 둔 대표 카드로 탑승 및 이용 후 자동 승인 처리됩니다.</p>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>친환경 에코 드라이빙</h3>
+              <p>탄소 중립 실천에 참여해 탄소 저감 리포트를 받아보고, 환경 마일리지를 쌓을 수 있습니다.</p>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>실시간 스마트 알림</h3>
+              <p>기상 상황 변동, 요금제 할인 찬스, 승차 및 하차 정류장 도착 알림을 놓치지 않게 알려 드립니다.</p>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="benefit-info">
+              <h3>24시간 안심 지원 센터</h3>
+              <p>사고 대응, 기기 장애, 정산 불편 사항이 발생하더라도 365일 실시간 상담사 연결이 대기합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. ASIDE (PROMOTION / APP BANNER) -->
+    <aside class="app-aside" id="aside">
+      <div class="container">
+        <div class="aside-banner">
+          <div class="aside-content">
+            <h2 class="aside-title">지금 바로 스마트폰에서<br>OmniGo를 만나보세요</h2>
+            <p class="aside-desc">첫 회원 가입 시 카셰어링 2시간 무료 이용권 및 대중교통 3,000원 웰컴 웰렛 쿠폰을 즉시 증정해 드립니다.</p>
+            <div class="aside-action">
+              <div class="store-buttons">
+                <a href="#" class="store-btn">
+                  <!-- Apple App Store Icon SVG -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,22C14.32,22.05 13.89,21.24 12.37,21.24C10.84,21.24 10.37,21.97 9.1,22.03C7.79,22.08 6.8,20.74 5.96,19.5C4.26,17.06 2.97,12.55 4.72,9.5C5.59,8 7.15,7.05 8.84,7C10.12,7 11.34,7.9 12.13,7.9C12.91,7.9 14.38,6.83 15.93,7C16.58,7.03 18.39,7.26 19.56,9C19.47,9.06 17.37,10.28 17.39,12.75C17.41,15.7 20,16.7 20.03,16.72C20.01,16.78 19.6,18.17 18.71,19.5M15.97,4.72C16.63,3.92 17.07,2.82 16.95,1.7C16,1.74 14.88,2.3 14.22,3.08C13.56,3.85 12.98,4.97 13.13,6.07C14.18,6.15 15.26,5.57 15.97,4.72Z"/>
+                  </svg>
+                  <div class="store-btn-text">
+                    Download on the
+                    <span>App Store</span>
+                  </div>
+                </a>
+                <a href="#" class="store-btn">
+                  <!-- Google Play Store Icon SVG -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3,5.27V18.73L16.55,12L3,5.27M17.87,11.33L21,12.9C21.6,13.2 21.6,13.8 21,14.1L17.87,15.67L15.23,13.2L17.87,11.33M3,3.15C3.39,3.15 3.86,3.31 4.39,3.58L16.66,9.81L14.07,12.16L3,3.15M3,20.85L14.07,11.84L16.66,14.19L4.39,20.42C3.86,20.69 3.39,20.85 3,20.85Z"/>
+                  </svg>
+                  <div class="store-btn-text">
+                    GET IT ON
+                    <span>Google Play</span>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="qr-container">
+                <div class="qr-box">
+                  <!-- QR Code Embedded SVG Mockup -->
+                  <svg class="qr-placeholder-svg" viewBox="0 0 100 100">
+                    <rect width="100" height="100" fill="white"/>
+                    <!-- Outer corners -->
+                    <rect x="10" y="10" width="25" height="25" fill="#0f172a"/>
+                    <rect x="15" y="15" width="15" height="15" fill="white"/>
+                    <rect x="18" y="18" width="9" height="9" fill="#0f172a"/>
+
+                    <rect x="65" y="10" width="25" height="25" fill="#0f172a"/>
+                    <rect x="70" y="15" width="15" height="15" fill="white"/>
+                    <rect x="73" y="18" width="9" height="9" fill="#0f172a"/>
+
+                    <rect x="10" y="65" width="25" height="25" fill="#0f172a"/>
+                    <rect x="15" y="70" width="15" height="15" fill="white"/>
+                    <rect x="18" y="73" width="9" height="9" fill="#0f172a"/>
+
+                    <!-- Random bits pattern to look authentic -->
+                    <rect x="40" y="10" width="5" height="5" fill="#0f172a"/>
+                    <rect x="50" y="10" width="10" height="5" fill="#0f172a"/>
+                    <rect x="45" y="18" width="5" height="10" fill="#0f172a"/>
+                    <rect x="55" y="25" width="5" height="5" fill="#0f172a"/>
+                    
+                    <rect x="10" y="45" width="10" height="5" fill="#0f172a"/>
+                    <rect x="18" y="55" width="5" height="5" fill="#0f172a"/>
+                    <rect x="25" y="40" width="5" height="10" fill="#0f172a"/>
+                    <rect x="25" y="55" width="15" height="5" fill="#0f172a"/>
+
+                    <rect x="45" y="45" width="10" height="10" fill="#0f172a"/>
+                    <rect x="55" y="40" width="5" height="5" fill="#0f172a"/>
+                    
+                    <rect x="40" y="65" width="5" height="15" fill="#0f172a"/>
+                    <rect x="50" y="75" width="15" height="5" fill="#0f172a"/>
+                    <rect x="55" y="65" width="5" height="5" fill="#0f172a"/>
+                    
+                    <rect x="70" y="45" width="15" height="5" fill="#0f172a"/>
+                    <rect x="75" y="55" width="5" height="10" fill="#0f172a"/>
+                    <rect x="85" y="50" width="5" height="5" fill="#0f172a"/>
+                    
+                    <rect x="70" y="70" width="10" height="5" fill="#0f172a"/>
+                    <rect x="80" y="75" width="5" height="10" fill="#0f172a"/>
+                    <rect x="85" y="65" width="5" height="5" fill="#0f172a"/>
+                  </svg>
+                </div>
+                <div class="qr-caption">카메라로 QR 코드를 스캔하세요</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 9. FOOTER -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo-link">
+          <div class="logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <span class="logo-text">OmniGo<span class="logo-dot">.</span></span>
+        </a>
+        <p>OmniGo는 지속 가능하고 스마트한 도시 이동을 목표로 통합 모빌리티의 기준을 세워 나갑니다.</p>
+        <div class="social-links">
+          <a href="#" class="social-icon" aria-label="OmniGo 페이스북">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="OmniGo 인스타그램">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="OmniGo 유튜브">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.498 6.163g2.235-2.222 5.84-2.222 9.837c0 3.977-.82 7.615-.82 7.615s.82 3.638.82 7.615c0 3.615-.585 7.615-2.222 7.615-5.86 0-9.837 0-9.837 0s-3.977 0-9.837 0c-1.637 0-2.222-4-2.222-7.615 0-3.977.82-7.615.82-7.615s-.82-3.638-.82-7.615c0-3.615.585-6.163 2.222-6.163zM9.545 15.568l6.75-3.568-6.75-3.568v7.136z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-links-title">이동 서비스</h4>
+        <ul class="footer-links-list">
+          <li><a href="#options">카셰어링</a></li>
+          <li><a href="#options">택시 호출</a></li>
+          <li><a href="#options">공공자전거</a></li>
+          <li><a href="#options">전동 킥보드</a></li>
+          <li><a href="#options">대중교통 환승</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-links-title">회사 정보</h4>
+        <ul class="footer-links-list">
+          <li><a href="#overview">회사 소개</a></li>
+          <li><a href="#benefits">채용 정보</a></li>
+          <li><a href="#pricing">비즈니스 파트너십</a></li>
+          <li><a href="#pricing">ESG 경영</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-links-title">고객센터</h4>
+        <ul class="footer-links-list">
+          <li><a href="#">자주 묻는 질문 (FAQ)</a></li>
+          <li><a href="#">1:1 문의하기</a></li>
+          <li><a href="#">사고 접수 센터</a></li>
+          <li><a href="#">이용자 가이드</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p class="copyright">&copy; 2026 OmniGo Mobility Inc. All Rights Reserved. 주식회사 옴니고모빌리티 | 대표이사 옴니 | 서울특별시 강남구 테헤란로 123 | 사업자등록번호 120-00-00000</p>
+      <div class="footer-legal-links">
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">위치기반서비스 이용약관</a>
+        <a href="#">운송약관</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
